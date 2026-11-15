@@ -8,7 +8,7 @@ payload_1 = {
     "userId": 1,
 }
 
-with open("./python/src/customers_bulk.json", "r", encoding="utf-8") as file:
+with open("./files/customers_bulk.json", "r", encoding="utf-8") as file:
     payload_2 = json.load(file)
 
 
