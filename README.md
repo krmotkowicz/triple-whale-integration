@@ -91,8 +91,6 @@ Customer email -> customer.email -> Provides customer's email identity
 
 Order revenue -> order_revenue -> Records the order's revenue amount in currency 
 
-Five synthetic orders were successfully submitted, totaling AUD $1,500.
-
 The bulk-order script reads a JSON array and submits each order individually. It does not use Triple Whale's dedicated bulk-order endpoint.
 
 ### 3.2 Ads Data-In API
@@ -219,7 +217,7 @@ python3 send_ads_file.py
 The advertising script reads `files/ads_single.json` using UTF-8 encoding:
 
 ```python
-with open("files/ads.json", "r", encoding="utf-8") as file:
+with open("files/ads_single.json", "r", encoding="utf-8") as file:
     ads = json.load(file)
 ```
 
@@ -231,7 +229,7 @@ Before submitting data, validate the JSON syntax:
 
 ```bash
 python3 -m json.tool files/orders_bulk.json
-python3 -m json.tool files/ads.json
+python3 -m json.tool files/ads_bulk.json
 ```
 
 Successful validation displays the formatted JSON without syntax errors.
@@ -405,8 +403,7 @@ A successful HTTP 200 response confirms API acceptance but does not independentl
 
 ### 6.2 Orders Reconciliation
 
-Five synthetic orders were submitted using the Orders Data-In API.
-
+Six synthetic orders were submitted using the Orders Data-In API.
 One order was submitted individually, followed by four orders read from `files/orders_bulk.json`.
 
 | Metric | Expected | Observed |
@@ -415,20 +412,24 @@ One order was submitted individually, followed by four orders read from `files/o
 | Total order revenue | AUD $1,750 | AUD $1,750 |
 
 **Result:** The order count, revenue total count matched the values observed in Triple Whale during testing.
-
 The advertising data was subsequently confirmed as visible in Triple Whale.
-
 
 ### 6.3 Adds Reconciliation
 
-4 add  orders were submitted using the Orders Data-In API.
+Four synthetic advertising records are included in the reported test dataset, representing a total advertising investment of AUD $300.
+The advertising data was submitted using the Triple Whale Ads Data-In API
 
-One order was submitted individually, followed by four orders read from `files/orders_bulk.json`.
+Individual advertising records were tested separately, and multiple records were processed from JSON files using Python.
 
 | Metric | Expected | Observed |
 |---|---:|---:|
 | Adds count | 4 | 4|
 | Total adds cost | AUD $300 | AUD $300 |
+
+Result: The README records a match between expected advertising spend and the values observed in Triple Whale.
+API acceptance was validated through HTTP 200 responses. Platform reconciliation was performed separately using Triple Whale reporting views.
+
+Important: Advertising ingestion provides visibility into marketing expenditure but does not independently establish customer-level attribution or attributed ROAS.
 
 ## 7. Solutions Architecture and Production Reliability
 
@@ -524,7 +525,7 @@ A production implementation would introduce additional controls beyond the curre
 Retries must be designed carefully.
 For example, an HTTP 400 validation error should not be retried unchanged. A timeout may require checking whether the original request was processed before attempting another submission.
 
-### 8.6 Optional API Extensions
+### 7.6 Optional API Extensions
 
 The exercise requires Orders and Ads Data-In APIs. Additional endpoints could provide useful context for a real merchant.
 
