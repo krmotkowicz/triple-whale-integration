@@ -1,0 +1,9 @@
+.env
+.env.*
+!.env.example
+orders.db
+*.db
+__pycache__/
+*.pyc
+.venv/
+*.log
