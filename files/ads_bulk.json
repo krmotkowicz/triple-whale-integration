@@ -2,10 +2,10 @@
   {
     "shop": "example123.com",
     "channel": "facebook-ads",
-    "event_date": "2026-11-16",
+    "event_date": "2026-11-22",
     "currency": "AUD",
     "campaign": {
-      "id": "002",
+      "id": "112",
       "name": "December Fitness Campaign",
        "status": "ACTIVE"
     },
@@ -16,24 +16,24 @@
   {
     "shop": "example123.com",
     "channel": "facebook-ads",
-    "event_date": "2026-11-16",
+    "event_date": "2026-11-22",
     "currency": "AUD",
     "campaign": {
-      "id": "003",
+      "id": "113",
       "name": "Outdoor Equipment Campaign",
        "status": "ACTIVE"
     },
     "metrics": {
-      "spend": 85
+      "spend": 40
     }
   },
   {
     "shop": "example123.com",
     "channel": "facebook-ads",
-    "event_date": "2026-11-16",
+    "event_date": "2026-11-22",
     "currency": "AUD",
     "campaign": {
-      "id": "004",
+      "id": "114",
       "name": "Returning Customers",
        "status": "ACTIVE"
     },
