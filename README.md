@@ -207,7 +207,7 @@ The bulk script reads `files/orders_bulk.json` and sends one POST request per or
 **Send a single advertising record:**
 
 ```bash
-python3 send_ads_py.py
+python3 send_ads.py
 ```
 
 **Send multiple advertising records from a JSON file:**
@@ -411,23 +411,28 @@ One order was submitted individually, followed by four orders read from `files/o
 
 | Metric | Expected | Observed |
 |---|---:|---:|
-| Order count | 5 | 5 |
-| Total order revenue | AUD $1,500 | AUD $1,500 |
-| Distinct customers | 3 | 3 |
+| Order count | 6 | 6 |
+| Total order revenue | AUD $1,750 | AUD $1,750 |
 
-**Result:** The order count, revenue total, and distinct customer count matched the values observed in Triple Whale during testing.
-
-Individual order IDs and revenue amounts should also be compared against the source payloads wherever the available platform views expose that level of detail.
-
+**Result:** The order count, revenue total count matched the values observed in Triple Whale during testing.
 
 The advertising data was subsequently confirmed as visible in Triple Whale.
 
-**Reconciliation status:** API acceptance and platform visibility confirmed. The final evidence
 
-Section 8 — Solutions Architecture and Production Reliability
-## 8. Solutions Architecture and Production Reliability
+### 6.3 Adds Reconciliation
 
-### 8.1 Architecture Overview
+4 add  orders were submitted using the Orders Data-In API.
+
+One order was submitted individually, followed by four orders read from `files/orders_bulk.json`.
+
+| Metric | Expected | Observed |
+|---|---:|---:|
+| Adds count | 4 | 4|
+| Total adds cost | AUD $300 | AUD $300 |
+
+## 7. Solutions Architecture and Production Reliability
+
+### 7.1 Architecture Overview
 
 The exercise implements a lightweight Python integration between a fictional commerce platform and Triple Whale.
 
@@ -444,7 +449,7 @@ Each record is submitted through an individual authenticated HTTP POST request.
 
 This design is sufficient to demonstrate the required ingestion and validation workflow. It is not intended to be a production-grade data pipeline.
 
-### 8.2 Why Order Data Matters
+### 7.2 Why Order Data Matters
 
 Orders provide the transactional foundation for understanding commerce performance.
 
@@ -459,20 +464,8 @@ For a real merchant, revenue definitions must be agreed upon before implementati
 
 For example, gross sales, discounts, refunds, taxes, shipping, and net revenue may produce different financial totals.
 
-**Potential data quality issues:**
 
-| Problem | Business impact |
-|---|---|
-| Missing orders | Underreported revenue and transactions |
-| Duplicate orders | Inflated revenue and conversion counts |
-| Incorrect customer IDs | Distorted customer and repeat-purchase analysis |
-| Incorrect timestamps | Sales assigned to the wrong reporting period |
-| Incorrect currency | Invalid financial comparisons |
-| Missing refunds or cancellations | Revenue may be overstated |
-
-A production integration would also need to handle order lifecycle changes, including updates, cancellations, and refunds, according to the supported API schema.
-
-### 8.3 Why Advertising Data Matters
+### 7.3 Why Advertising Data Matters
 
 Advertising data provides visibility into marketing investment and campaign performance.
 
@@ -495,14 +488,11 @@ For production, additional supported delivery metrics such as impressions and cl
 
 Incorrect campaign IDs, dates, spend amounts, or record grain could cause duplicated spend, missing campaigns, or misleading performance comparisons.
 
-### 8.4 Ingestion Is Not Attribution
+### 7.4 Ingestion Is Not Attribution
 
 Successfully ingesting order and advertising data does not prove that a particular advertisement generated a particular order.
-
 Orders represent transactions. Advertising records represent media investment and delivery.
-
 To establish attribution, a merchant would need additional evidence such as:
-
 - Website or server-side conversion tracking.
 - Advertising click identifiers and UTM parameters.
 - Consistent session, customer, and order identifiers.
@@ -514,9 +504,7 @@ To establish attribution, a merchant would need additional evidence such as:
 
 Attributed ROAS is not the same as profit.
 
-The exercise's aggregate revenue-to-spend comparison of approximately 5.64× is therefore not presented as attributed ROAS.
-
-### 8.5 Production Reliability Design
+### 7.5 Production Reliability Design
 
 A production implementation would introduce additional controls beyond the current Python scripts.
 
@@ -534,14 +522,9 @@ A production implementation would introduce additional controls beyond the curre
 | Reconciliation | Compare source and platform values using consistent reporting definitions |
 
 Retries must be designed carefully.
-
 For example, an HTTP 400 validation error should not be retried unchanged. A timeout may require checking whether the original request was processed before attempting another submission.
 
-
-
-These questions establish shared expectations before implementation and reduce the risk of incorrect reporting.
-
-### 8.9 Optional API Extensions
+### 8.6 Optional API Extensions
 
 The exercise requires Orders and Ads Data-In APIs. Additional endpoints could provide useful context for a real merchant.
 
@@ -554,16 +537,11 @@ The exercise requires Orders and Ads Data-In APIs. Additional endpoints could pr
 | Post-Purchase Surveys (PPS) | Add customer-reported attribution signals |
 
 These endpoints were not implemented in the current exercise.
-
 Their suitability would depend on the merchant's business model, available source data, and reporting objectives.
 
+## 8. Known Limitations, Submission Evidence, and Final Checklist
 
-The guiding principle is to make data **accurate, traceable, recoverable, and trustworthy** before increasing integration complexity.
-Section 9 — Known Limitations, Submission Evidence, and Final Checklist
-
-## 9. Known Limitations, Submission Evidence, and Final Checklist
-
-### 9.1 Known Limitations
+### 8.1 Known Limitations
 
 This project is a technical demonstration using a fictional merchant and synthetic data. It is not a production integration.
 
@@ -584,7 +562,7 @@ These limitations are intentional for a focused technical exercise.
 
 The implementation demonstrates successful ingestion, troubleshooting, and platform validation while identifying the additional controls required for a production environment.
 
-### 9.2 Submission Artifacts
+## 9 Submission Artifacts
 The GitHub repository contains or will contain the following deliverables.
 
 | Artifact | Purpose |
@@ -609,4 +587,7 @@ The repository should not contain API credentials, real customer data, or produc
 - Single advertising record POST request.
 - Three advertising records submitted from a JSON file.
 - HTTP 200 responses confirming acceptance.
-- Sanitized payloads and request timestamps, where recorded.
+- Sanitized payloads and request timestamps, where recorded
+- Dashboard numbers match the ads and orders files
+
+  ## END ##
