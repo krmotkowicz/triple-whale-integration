@@ -58,7 +58,7 @@ The reporting timezone is Australia/Sydney. Order timestamps were supplied in UT
 
 The integration follows a simple data-in pattern:
 
-Synthetic JSON data → Python scripts → Triple Whale REST API → Triple Whale Summary Dashboard
+Synthetic JSON data → Python scripts → Triple Whale REST Data-in API → Triple Whale Summary Dashboard
 
 Each JSON record is submitted through an individual HTTP POST request. The scripts use the `requests` library to communicate with Triple Whale and print the HTTP status and API response.
 
