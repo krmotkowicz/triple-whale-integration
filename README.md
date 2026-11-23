@@ -1,9 +1,9 @@
 # triple-whale-integration
 
 --------------------------------
-Date: 16 Nov 2026
+Date: 23 Nov 2026
 project: Assessment 
-3whale: Krystian Motkowicz
+Triplewhale: Krystian Motkowicz
 --------------------------------
 
 # Triple Whale — Orders & Ads Data-In Integration
@@ -44,7 +44,7 @@ Dataset: Synthetic order and ads data only; no real customer information.
 
 | Data source | Records | Expected amount |
 |---|---:|---:|
-| Orders | 6 | AUD $1,750 revenue | wiem
+| Orders | 6 | AUD $1,750 revenue | 
 | Advertising | 3 campaigns | AUD $300.00 spend |
 
 Orders were submitted through the Orders Data-In API. 
@@ -66,7 +66,6 @@ Authentication uses the `TRIPLE_WHALE_API_KEY` environment variable rather than 
 
 The integration demonstrates API ingestion and reporting validation. It does not establish customer-level advertising attribution.
 
-###4.1 API Endpoints and Field Mapping
 
 3.1 Orders Data-In API
 
