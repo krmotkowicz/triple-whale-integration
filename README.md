@@ -563,7 +563,7 @@ These limitations are intentional for a focused technical exercise.
 
 The implementation demonstrates successful ingestion, troubleshooting, and platform validation while identifying the additional controls required for a production environment.
 
-## 10 Submission Artifacts
+## 10. Submission Artifacts
 The GitHub repository contains or will contain the following deliverables.
 
 | Artifact | Purpose |
