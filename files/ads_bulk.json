@@ -1,0 +1,45 @@
+[
+  {
+    "shop": "example123.com",
+    "channel": "facebook-ads",
+    "event_date": "2026-11-16",
+    "currency": "AUD",
+    "campaign": {
+      "id": "002",
+      "name": "December Fitness Campaign",
+       "status": "ACTIVE"
+    },
+    "metrics": {
+      "spend": 100
+    }
+  },
+  {
+    "shop": "example123.com",
+    "channel": "facebook-ads",
+    "event_date": "2026-11-16",
+    "currency": "AUD",
+    "campaign": {
+      "id": "003",
+      "name": "Outdoor Equipment Campaign",
+       "status": "ACTIVE"
+    },
+    "metrics": {
+      "spend": 85
+    }
+  },
+  {
+    "shop": "example123.com",
+    "channel": "facebook-ads",
+    "event_date": "2026-11-16",
+    "currency": "AUD",
+    "campaign": {
+      "id": "004",
+      "name": "Returning Customers",
+       "status": "ACTIVE"
+    },
+    "metrics": {
+      "spend": 60.00
+    }
+  }
+]
+

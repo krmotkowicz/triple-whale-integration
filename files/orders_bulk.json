@@ -1,0 +1,47 @@
+
+[
+  {
+    "shop": "example123.com",
+    "order_id": "002",
+    "created_at": "2026-11-16T00:00:00Z",
+    "currency": "AUD",
+    "customer": {
+      "id": "001",
+      "email": "cust1@example.com"
+    },
+    "order_revenue": 400
+  },
+  {
+    "shop": "example123.com",
+    "order_id": "003",
+    "created_at": "2026-11-16T00:00:00Z",
+    "currency": "AUD",
+    "customer": {
+      "id": "001",
+      "email": "cust1@example.com"
+    },
+    "order_revenue": 100
+  },
+  {
+    "shop": "example123.com",
+    "order_id": "004",
+    "created_at": "2026-11-16T00:00:00Z",
+    "currency": "AUD",
+    "customer": {
+      "id": "002",
+      "email": "cust2@example.com"
+    },
+    "order_revenue": 400
+  },
+  {
+    "shop": "example123.com",
+    "order_id": "005",
+    "created_at": "2026-11-16T00:00:00Z",
+    "currency": "AUD",
+    "customer": {
+      "id": "003",
+      "email": "cust3@example.com"
+    },
+    "order_revenue": 100
+  }
+]

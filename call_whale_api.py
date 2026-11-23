@@ -1,11 +1,11 @@
 import os
 import requests
 
-URL = "https://jsonplaceholder.typicode.com/posts"
+URL = "https://jsonplaceholder.typicode.com/posts". #ORDERS 
 headers = {
     "accept": "application/json",
     "content-type": "application/json",
-    "x-api-key": os.getenv("TRIPLE_WHALE_API")                          # env var set up in Profile/Settings/Codespaces
+    "x-api-key": os.getenv("TRIPLE_WHALE_KEY_API")                          # env var set up in Profile/Settings/Codespaces
 }
 
 

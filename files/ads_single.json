@@ -1,0 +1,16 @@
+
+ {
+    "shop": "example123.com",
+    "channel": "facebook-ads",
+    "event_date": "2026-11-16",
+    "currency": "AUD",
+    "campaign": {
+      "id": "001",
+      "name": "November Fitness Campaign",
+       "status": "ACTIVE"
+    },
+    "metrics": {
+      "spend": 100
+    }
+  }
+  
