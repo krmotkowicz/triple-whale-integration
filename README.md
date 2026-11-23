@@ -539,9 +539,9 @@ The exercise requires Orders and Ads Data-In APIs. Additional endpoints could pr
 These endpoints were not implemented in the current exercise.
 Their suitability would depend on the merchant's business model, available source data, and reporting objectives.
 
-## 8. Known Limitations, Submission Evidence, and Final Checklist
+## 9. Known Limitations, Submission Evidence, and Final Checklist
 
-### 8.1 Known Limitations
+### 9.1 Known Limitations
 
 This project is a technical demonstration using a fictional merchant and synthetic data. It is not a production integration.
 
@@ -562,7 +562,7 @@ These limitations are intentional for a focused technical exercise.
 
 The implementation demonstrates successful ingestion, troubleshooting, and platform validation while identifying the additional controls required for a production environment.
 
-## 9 Submission Artifacts
+## 10 Submission Artifacts
 The GitHub repository contains or will contain the following deliverables.
 
 | Artifact | Purpose |
