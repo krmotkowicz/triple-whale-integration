@@ -45,7 +45,7 @@ Dataset: Synthetic order and ads data only; no real customer information.
 | Data source | Records | Expected amount |
 |---|---:|---:|
 | Orders | 6 | AUD $1,750 revenue | 
-| Advertising | 3 campaigns | AUD $300.00 spend |
+| Advertising | 4 campaigns | AUD $300.00 spend |
 
 Orders were submitted through the Orders Data-In API. 
 Advertising campaign records were submitted through the Ads Data-In API. 
@@ -67,7 +67,7 @@ Authentication uses the `TRIPLE_WHALE_API_KEY` environment variable rather than 
 The integration demonstrates API ingestion and reporting validation. It does not establish customer-level advertising attribution.
 
 
-3.1 Orders Data-In API
+### 3.1 Orders Data-In API
 
 Endpoint: POST https://api.triplewhale.com/api/v2/data-in/orders
 
@@ -95,7 +95,7 @@ Five synthetic orders were successfully submitted, totaling AUD $1,500.
 
 The bulk-order script reads a JSON array and submits each order individually. It does not use Triple Whale's dedicated bulk-order endpoint.
 
-###3.2 Ads Data-In API
+### 3.2 Ads Data-In API
 
 Endpoint: POST https://api.triplewhale.com/api/v2/data-in/ads
 
@@ -122,22 +122,15 @@ Campaign status -> campaign.status -> Indicates ACTIVE or PAUSED
 Advertising spend -> metrics.spend -> Records advertising investment
 
 
+### 3.3 Relationships Between Orders and Ads
 
-3.3 Relationships Between Orders and Ads
-
-Orders and advertising records share the same merchant identifier and reporting period.
-
+Orders and advertising records share the same merchant identifier.
 However, the records do not contain a verified relationship between an individual advertising interaction and an order.
-
-???? Advertising spend and total commerce revenue can be compared at an aggregate level, but this does not establish campaign-level attribution.
-
 Additional click tracking, customer/session identity, and attribution configuration would be needed to connect advertising activity to individual conversions.
 
+## 4. Setup and Execution Instructions
 
-Section 5: Setup and Execution Instructions.
-## 5. Setup and Execution Instructions
-
-### 5.1 Prerequisites
+### 4.1 Prerequisites
 
 The integration was developed and tested using:
 
@@ -149,7 +142,7 @@ The integration was developed and tested using:
 
 No Shopify store, Node.js installation, or local development environment is required.
 
-### 5.2 Install Dependencies
+### 4.2 Install Dependencies
 
 From the root directory of the GitHub repository, run:
 
@@ -165,7 +158,7 @@ requests
 
 Python's built-in `json` and `os` modules require no additional installation.
 
-### 5.3 Configure Authentication
+### 4.3 Configure Authentication
 
 The integration uses an environment variable named `TRIPLE_WHALE_API_KEY`.
 
@@ -193,7 +186,7 @@ True
 
 API credentials must never be committed to GitHub, hard-coded into scripts, or included in logs and screenshots.
 
-### 5.4 Run the Orders Integration
+### 4.4 Run the Orders Integration
 
 **Send a single order:**
 
@@ -209,7 +202,7 @@ python3 send_orders_file.py
 
 The bulk script reads `files/orders_bulk.json` and sends one POST request per order.
 
-### 5.5 Run the Ads Integration
+### 4.5 Run the Ads Integration
 
 **Send a single advertising record:**
 
@@ -232,7 +225,7 @@ with open("files/ads.json", "r", encoding="utf-8") as file:
 
 Each advertising record is submitted through a separate POST request.
 
-### 5.6 Validate JSON Files
+### 4.6 Validate JSON Files
 
 Before submitting data, validate the JSON syntax:
 
@@ -245,7 +238,7 @@ Successful validation displays the formatted JSON without syntax errors.
 
 This checks JSON syntax only. It does not validate the Triple Whale API schema.
 
-### 5.7 Verify API Responses
+### 4.7 Verify API Responses
 
 The scripts display the HTTP status code and API response for each request.
 
@@ -258,10 +251,9 @@ Response: {"success":true,"message":"Ad received"}
 
 A successful HTTP response confirms API acceptance. Data correctness and reporting visibility must be verified separately inside Triple Whale.
 
-Section 6 — API Validation, Errors, and Troubleshooting.
-## 6. API Validation, Error Handling and Troubleshooting
+## 5. API Validation, Error Handling and Troubleshooting
 
-### 6.1 Validation Approach
+### 5.1 Validation Approach
 
 The integration was tested incrementally to isolate issues before processing multiple records.
 The following approach was used:
@@ -275,7 +267,7 @@ The following approach was used:
 
 This approach separates JSON syntax validation, API schema validation, and platform-level data reconciliation.
 
-### 6.2 Controlled Failure — Invalid Advertising Campaign
+### 5.2 Controlled Failure — Invalid Advertising Campaign
 
 During testing of the Ads Data-In API, the initial POST request returned HTTP 400.
 
@@ -310,7 +302,7 @@ The API identified two campaign-level validation failures:
 
 The API required the campaign status to be either `ACTIVE` or `PAUSED`.
 
-### 6.3 First Correction and Retry
+### 5.3 First Correction and Retry
 
 The campaign status was corrected to `ACTIVE`.
 
@@ -334,7 +326,7 @@ This demonstrated that the campaign status issue had been resolved, while the ca
 
 The next troubleshooting step was to inspect the outgoing JSON payload and verify the structure of the nested `campaign` object.
 
-### 6.4 Successful Correction
+### 5.4 Successful Correction
 
 The corrected campaign structure included the required fields:
 
@@ -366,10 +358,9 @@ All three advertising records returned successful API responses.
 
 The campaign structure above illustrates the required fields; the final evidence should include the complete sanitized payload actually submitted.
 
-### 6.5 Bulk File Processing
+### 5.5 Bulk File Processing
 
 The Python scripts read JSON arrays and submit records individually.
-
 For example, the advertising integration processes each record using:
 
 ```python
@@ -391,58 +382,16 @@ This allows individual failures to be identified without treating the entire fil
 
 The current implementation prints responses but does not yet implement automatic retries, persistent failure logging, or checkpoint-based recovery.
 
-### 6.6 Error Handling and Production Improvements
 
-| Scenario | Current implementation | Recommended production approach |
-|---|---|---|
-| Invalid JSON syntax | Manual validation using `json.tool` | Automated pre-submission validation |
-| Invalid API payload | Inspect HTTP 400 response | Schema validation before sending |
-| Authentication failure | API returns an error | Monitor permissions and credential expiry |
-| Network timeout | Request uses a 20-second timeout | Controlled retries with backoff |
-| API rate limiting | No automatic handling | Respect HTTP 429 and retry guidance |
-| Partial failures | Responses printed individually | Persist per-record success and failure status |
-| Duplicate submissions | Not automatically prevented by the script | Apply documented endpoint update/deduplication behavior |
-| Missing platform data | Manual dashboard verification | Automated source-to-platform reconciliation |
-
-Retries should distinguish temporary failures from permanent validation errors. For example, retrying an unchanged HTTP 400 payload would not resolve a missing required field.
-
-### 6.7 Security Considerations
+### 5.6 Security Considerations
 
 API credentials are stored in GitHub Codespaces secrets and accessed through the `TRIPLE_WHALE_API_KEY` environment variable.
 
 Credentials are not included in source code, JSON files, request evidence, or screenshots.
 
-**Production Security and Monitoring**
+## 6. Platform Validation and Reconciliation
 
-The proof of concept stores the Triple Whale API key as a GitHub Codespaces secret and accesses it through an environment variable. No credentials are hardcoded in the Python scripts.
-
-For a production deployment, I would introduce the following controls:
-
-Credential management: Store API keys in a managed secrets service, establish a rotation process, and revoke compromised or superseded credentials.
-
-Least-privilege access: Use dedicated integration credentials with access limited to the required operations and merchant accounts, where supported by Triple Whale.
-
-Secure logging: Capture request timestamps, endpoint names, HTTP status codes, record identifiers, and sanitized error messages without exposing credentials or customer information.
-
-Authentication monitoring: Alert on repeated HTTP 401/403 responses, investigate credential failures, and avoid blindly retrying authentication errors.
-
-These measures would improve security, operational visibility, and the reliability of the integration.
-
-### 6.8 Key Learning
-
-Successful integration requires more than receiving HTTP 200.
-
-Three separate checks are necessary:
-
-1. **Payload validity:** Does the request conform to the API schema?
-2. **API acceptance:** Did Triple Whale accept the record?
-3. **Platform reconciliation:** Do the expected records and values appear correctly in Triple Whale?
-
-The exercise demonstrated all three stages through incremental testing and manual dashboard verification.
-
-## 7. Platform Validation and Reconciliation
-
-### 7.1 Validation Objective
+### 6.1 Validation Objective
 
 The objective of reconciliation is to confirm that the synthetic commerce and advertising data submitted through the Triple Whale Data-In APIs appears correctly in the platform.
 
@@ -454,7 +403,7 @@ Validation was performed at three levels:
 
 A successful HTTP 200 response confirms API acceptance but does not independently prove that reporting values are correct.
 
-### 7.2 Orders Reconciliation
+### 6.2 Orders Reconciliation
 
 Five synthetic orders were submitted using the Orders Data-In API.
 
@@ -470,27 +419,6 @@ One order was submitted individually, followed by four orders read from `files/o
 
 Individual order IDs and revenue amounts should also be compared against the source payloads wherever the available platform views expose that level of detail.
 
-### 7.3 Advertising Reconciliation
-
-Three synthetic campaign records were submitted using the Ads Data-In API.
-
-The advertising records were read from `files/ads.json` and submitted individually through HTTP POST requests.
-
-| Campaign ID | Expected spend (AUD) |
-|---|---:|
-| `campaign-001` | $120.50 |
-| `campaign-002` | $85.25 |
-| `campaign-003` | $60.00 |
-| **Total** | **$265.75** |
-
-All three advertising POST requests returned HTTP 200 with the response:
-
-```json
-{
-  "success": true,
-  "message": "Ad received"
-}
-```
 
 The advertising data was subsequently confirmed as visible in Triple Whale.
 
@@ -609,91 +537,7 @@ Retries must be designed carefully.
 
 For example, an HTTP 400 validation error should not be retried unchanged. A timeout may require checking whether the original request was processed before attempting another submission.
 
-### 8.6 Proposed Production Architecture
 
-A production-ready implementation could use the following flow:
-
-`Commerce / Advertising Sources`
-
-↓
-
-`Scheduled Extraction or Event Ingestion`
-
-↓
-
-`Schema Validation and Normalization`
-
-↓
-
-`Durable Queue or Staging Layer`
-
-↓
-
-`Triple Whale Data-In API`
-
-↓
-
-`Response Logging and Monitoring`
-
-↓
-
-`Source-to-Platform Reconciliation`
-
-This architecture would provide better recovery, traceability, and operational control.
-
-A durable staging layer would help prevent data loss during temporary API outages.
-
-Each source record could be tracked using a stable identifier, processing status, submission timestamp, retry count, and sanitized response.
-
-This is a proposed production design, not functionality implemented in the current exercise.
-
-### 8.7 Detecting Silent Data Loss
-
-An HTTP 200 response does not guarantee that all expected reporting values are correct.
-
-A production monitoring process should compare:
-
-- Source record counts versus accepted record counts.
-- Expected order revenue versus platform-reported revenue.
-- Expected advertising spend versus platform-reported spend.
-- Records missing from expected reporting dates.
-- Processing delays and repeated failures.
-
-For example, if a source contains 1,000 orders totaling AUD $120,000 but the platform reports only 998 orders and AUD $119,500, the integration should flag the discrepancy for investigation.
-
-Reconciliation should distinguish source errors, API failures, reporting filters, timezone differences, and platform processing delays.
-
-### 8.8 Customer Discovery Before Implementation
-
-Before onboarding a real merchant, I would clarify the following questions.
-
-**Business and data definitions**
-
-- What commerce and advertising platforms are the systems of record?
-- How does the merchant define gross revenue, net revenue, discounts, refunds, taxes, and shipping?
-- Which currencies and reporting timezones are used?
-- What historical data needs to be imported?
-
-**Technical integration**
-
-- Which APIs, webhooks, or export mechanisms are available?
-- How are order, customer, product, and campaign identifiers generated?
-- How are order updates, cancellations, and refunds represented?
-- What data volumes, freshness requirements, and API limits apply?
-
-**Security and operations**
-
-- Who owns API credentials and access permissions?
-- How are credentials stored and rotated?
-- Who monitors ingestion failures?
-- Who investigates discrepancies between source systems and Triple Whale?
-- What are the recovery and escalation procedures?
-
-**Business success criteria**
-
-- Which reporting outcomes matter most to the merchant?
-- What accuracy and data freshness thresholds are acceptable?
-- How will the merchant verify that the implementation is successful?
 
 These questions establish shared expectations before implementation and reduce the risk of incorrect reporting.
 
@@ -713,30 +557,6 @@ These endpoints were not implemented in the current exercise.
 
 Their suitability would depend on the merchant's business model, available source data, and reporting objectives.
 
-### 8.10 Implementation Trade-offs
-
-The current solution prioritizes simplicity, transparency, and testability.
-
-**Strengths**
-
-- Minimal dependencies.
-- Easy-to-understand Python code.
-- Separate Orders and Ads integrations.
-- Reproducible synthetic datasets.
-- Visible HTTP responses.
-- Demonstrated troubleshooting and platform verification.
-
-**Limitations**
-
-- No automated scheduling.
-- No persistent request or response logs.
-- No automatic retry or rate-limit handling.
-- No automated source-to-platform reconciliation.
-- No automated schema validation beyond JSON syntax.
-- No implemented attribution tracking.
-- No production monitoring or alerting.
-
-For a production deployment, I would prioritize persistent per-record processing logs, controlled retries, and automated reconciliation before expanding to additional endpoints.
 
 The guiding principle is to make data **accurate, traceable, recoverable, and trustworthy** before increasing integration complexity.
 Section 9 — Known Limitations, Submission Evidence, and Final Checklist
