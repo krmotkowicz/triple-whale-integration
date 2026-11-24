@@ -1,13 +1,6 @@
-#Test to chech if Python can read the 3Whale API key 
-import os
+#Check if 3Whale API key is configured properly
 
-api_key = os.getenv("TRIPLE_WHALE_API_KEY")
+from config import API_KEY
 
-if api_key:
-    print("API key found successfully")
-else:
-    print("API key not found")
-
-
-
-
+print("API key found successfully")
+print("Masked API key:", API_KEY)

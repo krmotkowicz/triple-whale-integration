@@ -1,49 +1,40 @@
-import os
 import json
 import requests
 
-url = "https://api.triplewhale.com/api/v2/data-in/orders"
+from config import ORDERS_URL
+from api_client import submit_data
 
-api_key = os.getenv("TRIPLE_WHALE_API_KEY")
-if not api_key:
-    raise RuntimeError("TRIPLE_WHALE_API_KEY not found")
-
-headers = {
-    "accept": "application/json",
-    "content-type": "application/json",
-    "x-api-key": api_key
-}
-
-# Read all orders from JSON
-with open("files/orders_bulk.json", "r",encoding="utf-8") as file:
+with open("files/orders_bulk.json", "r", encoding="utf-8") as file:
     payload = json.load(file)
 
 if not isinstance(payload, list):
     raise ValueError("Expected a JSON array of orders")
 
-print("Total orders to send:", len(payload))
+successful_orders = []
+failed_orders = []
 
-# Send every order
 for order in payload:
     order_id = order["order_id"]
-    print("Sending order:", order_id)
 
     try:
-        response = requests.post(
-            url,
-            json=order,
-            headers=headers,
-            timeout=20
-        )
-    except requests.RequestException as error:
-        print("Request failed:", error)
+        response = submit_data(ORDERS_URL, order)
+        successful_orders.append(order_id)
+
+        print(f"Order {order_id}: {response.status_code}")
+
+    except requests.HTTPError as error:
+        failed_orders.append(order_id)
+
+        print(f"Order {order_id} failed: {error}")
+
+        if error.response.status_code == 400:
+            continue
+
         break
 
-    print("HTTP status:", response.status_code)
-    print("Response:", response.text)
-
-    if not response.ok:
-        print("Stopping after failed order:", order_id)
+    except requests.RequestException:
+        print(f"Order {order_id}: submission outcome unknown")
         break
-else:
-    print("All orders submitted successfully")
+
+print("Successful orders:", successful_orders)
+print("Failed orders:", failed_orders)

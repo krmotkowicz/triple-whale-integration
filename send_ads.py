@@ -1,20 +1,6 @@
-
-import os
-import requests
-
-# Triple Whale Ads Data-In endpoint
-url = "https://api.triplewhale.com/api/v2/data-in/ads"
-
-# Read API key from Codespaces secret
-api_key = os.getenv("TRIPLE_WHALE_API_KEY")
-
-if not api_key:
-    raise ValueError("Missing TRIPLE_WHALE_API_KEY")
-
-headers = {
-    "x-api-key": api_key,
-    "Content-Type": "application/json"
-}
+import json
+from config import ADS_URL
+from api_client import submit_data
 
 # Single ad record (Python dictionary sent as JSON)
 payload = {
@@ -23,26 +9,20 @@ payload = {
     "event_date": "2026-11-22",
     "currency": "AUD",
     "campaign": {
-      "id": "001",
-      "name": "November Fitness Campaign",
-       "status": "ACTIVE"
+        "id": "001",
+        "name": "November Fitness Campaign",
+        "status": "ACTIVE"
     },
     "metrics": {
-      "spend": 100
+        "spend": 100
     }
-  }
+}
 
-# Send one POST request
-import json
-
+# Display JSON payload for debugging
 print(json.dumps(payload, indent=2))
 
-response = requests.post(
-    url,
-    headers=headers,
-    json=payload,
-    timeout=20
-)
+# Send one POST request using the shared API client
+response = submit_data(ADS_URL, payload)
 
 print("HTTP status:", response.status_code)
 print("API response:", response.text)

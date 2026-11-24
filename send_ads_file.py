@@ -1,37 +1,44 @@
-
-import os
 import json
 import requests
 
-url = "https://api.triplewhale.com/api/v2/data-in/ads"
+from config import ADS_URL
+from api_client import submit_data
 
-api_key = os.getenv("TRIPLE_WHALE_API_KEY")
+# Load advertising records from JSON file
+with open("files/ads_bulk.json", "r", encoding="utf-8") as file:
+    payload = json.load(file)
 
-if not api_key:
-    raise ValueError("Missing TRIPLE_WHALE_API_KEY")
+# Validate payload structure
+if not isinstance(payload, list):
+    raise ValueError("Expected a JSON array of ads")
 
-headers = {
-    "x-api-key": api_key,
-    "Content-Type": "application/json"
-}
+successful_ads = []
+failed_ads = []
 
-# Read ads from JSON file
-with open("files/ads_bulk.json", "r",encoding="utf-8") as file:
-    ads = json.load(file)
-
-print(f"Loaded {len(ads)} ad records")
-
-# Send each ad separately
-for ad in ads:
+# Submit each advertising record
+for ad in payload:
     campaign_id = ad["campaign"]["id"]
 
-    response = requests.post(
-        url,
-        headers=headers,
-        json=ad,
-        timeout=20
-    )
+    try:
+        response = submit_data(ADS_URL, ad)
+        successful_ads.append(campaign_id)
 
-    print(f"\nCampaign: {campaign_id}")
-    print("HTTP status:", response.status_code)
-    print("Response:", response.text)
+        print(f"Campaign {campaign_id}: {response.status_code}")
+
+    except requests.HTTPError as error:
+        failed_ads.append(campaign_id)
+
+        print(f"Campaign {campaign_id} failed: {error}")
+
+        if error.response.status_code == 400:
+            continue
+
+        break
+
+    except requests.RequestException:
+        print(f"Campaign {campaign_id}: submission outcome unknown")
+        break
+
+# Execution summary
+print("Successful ads:", successful_ads)
+print("Failed ads:", failed_ads)
