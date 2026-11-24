@@ -20,7 +20,7 @@ headers = {
 payload = {
     "shop": "example123.com",
     "channel": "facebook-ads",
-    "event_date": "2026-11-16",
+    "event_date": "2026-11-22",
     "currency": "AUD",
     "campaign": {
       "id": "001",

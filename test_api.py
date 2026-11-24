@@ -1,4 +1,4 @@
-#Test to chech if Pythoin ca read the 3Whale API key 
+#Test to chech if Python can read the 3Whale API key 
 import os
 
 api_key = os.getenv("TRIPLE_WHALE_API_KEY")
