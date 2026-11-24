@@ -138,8 +138,6 @@ The integration was developed and tested using:
 - Triple Whale exercise store configured with Custom as the main sales platform
 - Triple Whale API key with the required Data-In Orders and Ads Read permissions
 
-No Shopify store, Node.js installation, or local development environment is required.
-
 ### 4.2 Install Dependencies
 
 From the root directory of the GitHub repository, run:
@@ -159,7 +157,6 @@ Python's built-in `json` and `os` modules require no additional installation.
 ### 4.3 Configure Authentication
 
 The integration uses an environment variable named `TRIPLE_WHALE_API_KEY`.
-
 In GitHub Codespaces, configure this as a Codespaces secret and make it available to the running environment.
 
 The Python scripts retrieve the key using:
@@ -184,59 +181,7 @@ True
 
 API credentials must never be committed to GitHub, hard-coded into scripts, or included in logs and screenshots.
 
-### 4.4 Run the Orders Integration
-
-**Send a single order:**
-
-```bash
-python3 send_orders.py
-```
-
-**Send multiple orders from a JSON file:**
-
-```bash
-python3 send_orders_file.py
-```
-
-The bulk script reads `files/orders_bulk.json` and sends one POST request per order.
-
-### 4.5 Run the Ads Integration
-
-**Send a single advertising record:**
-
-```bash
-python3 send_ads.py
-```
-
-**Send multiple advertising records from a JSON file:**
-
-```bash
-python3 send_ads_file.py
-```
-
-The advertising script reads `files/ads_single.json` using UTF-8 encoding:
-
-```python
-with open("files/ads_single.json", "r", encoding="utf-8") as file:
-    ads = json.load(file)
-```
-
-Each advertising record is submitted through a separate POST request.
-
-### 4.6 Validate JSON Files
-
-Before submitting data, validate the JSON syntax:
-
-```bash
-python3 -m json.tool files/orders_bulk.json
-python3 -m json.tool files/ads_bulk.json
-```
-
-Successful validation displays the formatted JSON without syntax errors.
-
-This checks JSON syntax only. It does not validate the Triple Whale API schema.
-
-### 4.7 Verify API Responses
+### 4.4 Verify API Responses
 
 The scripts display the HTTP status code and API response for each request.
 
@@ -356,37 +301,6 @@ All three advertising records returned successful API responses.
 
 The campaign structure above illustrates the required fields; the final evidence should include the complete sanitized payload actually submitted.
 
-### 5.5 Bulk File Processing
-
-The Python scripts read JSON arrays and submit records individually.
-For example, the advertising integration processes each record using:
-
-```python
-for ad in ads:
-    response = requests.post(
-        url,
-        headers=headers,
-        json=ad,
-        timeout=20
-    )
-
-    print("HTTP status:", response.status_code)
-    print("Response:", response.text)
-```
-
-Each POST request produces an independent API response.
-
-This allows individual failures to be identified without treating the entire file as a single API transaction.
-
-The current implementation prints responses but does not yet implement automatic retries, persistent failure logging, or checkpoint-based recovery.
-
-
-### 5.6 Security Considerations
-
-API credentials are stored in GitHub Codespaces secrets and accessed through the `TRIPLE_WHALE_API_KEY` environment variable.
-
-Credentials are not included in source code, JSON files, request evidence, or screenshots.
-
 ## 6. Platform Validation and Reconciliation
 
 ### 6.1 Validation Objective
@@ -426,9 +340,6 @@ Individual advertising records were tested separately, and multiple records were
 | Adds count | 4 | 4|
 | Total adds cost | AUD $300 | AUD $300 |
 
-Result: The README records a match between expected advertising spend and the values observed in Triple Whale.
-API acceptance was validated through HTTP 200 responses. Platform reconciliation was performed separately using Triple Whale reporting views.
-
 Important: Advertising ingestion provides visibility into marketing expenditure but does not independently establish customer-level attribution or attributed ROAS.
 
 ## 7. Solutions Architecture and Production Reliability
@@ -440,6 +351,9 @@ The exercise implements a lightweight Python integration between a fictional com
 **Current implementation:**
 
 `Synthetic JSON files → Python scripts → Triple Whale Data-In APIs → Platform reporting views`
+
+## Solution Architecture
+![Triple Whale Architecture](./images/Architecture_3whale.png)
 
 The solution separates two data domains:
 
@@ -465,7 +379,6 @@ For a real merchant, revenue definitions must be agreed upon before implementati
 
 For example, gross sales, discounts, refunds, taxes, shipping, and net revenue may produce different financial totals.
 
-
 ### 7.3 Why Advertising Data Matters
 
 Advertising data provides visibility into marketing investment and campaign performance.
@@ -482,8 +395,6 @@ Accurate advertising data supports:
 The reporting grain must be explicitly defined.
 
 For this exercise, advertising data is represented at **campaign-by-reporting-date grain**.
-
-If a source provides multiple rows for the same campaign and date, the integration must determine whether those rows represent distinct dimensions, updates, or duplicates before submission.
 
 For production, additional supported delivery metrics such as impressions and clicks would be useful for calculating CTR and CPC. These metrics were not established as successfully ingested in the current exercise.
 
@@ -540,9 +451,9 @@ The exercise requires Orders and Ads Data-In APIs. Additional endpoints could pr
 These endpoints were not implemented in the current exercise.
 Their suitability would depend on the merchant's business model, available source data, and reporting objectives.
 
-## 9. Known Limitations, Submission Evidence, and Final Checklist
+## 8. Known Limitations, Submission Evidence, and Final Checklist
 
-### 9.1 Known Limitations
+### 8.1 Known Limitations
 
 This project is a technical demonstration using a fictional merchant and synthetic data. It is not a production integration.
 
@@ -561,9 +472,7 @@ This project is a technical demonstration using a fictional merchant and synthet
 
 These limitations are intentional for a focused technical exercise.
 
-The implementation demonstrates successful ingestion, troubleshooting, and platform validation while identifying the additional controls required for a production environment.
-
-## 10. Submission Artifacts
+## 9. Submission Artifacts
 The GitHub repository contains or will contain the following deliverables.
 
 | Artifact | Purpose |
