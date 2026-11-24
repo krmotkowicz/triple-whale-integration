@@ -10,7 +10,7 @@ Triplewhale: Krystian Motkowicz
 
 ## 1. Project Overview
 
-This project demonstrates a Python-based integration between a fictional e-commerce merchant Exampand Triple Whale using the Orders and Ads Data-In APIs.
+This project demonstrates a Python-based integration between a fictional e-commerce merchant Example123.com Triple Whale using the Orders and Ads Data-In APIs.
 
 The objective is to ingest synthetic commerce and advertising data, validate successful API responses, reconcile the ingested data against Triple Whale's reporting views, and explain how the integration could be made reliable in a production environment.
 
